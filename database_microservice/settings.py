@@ -66,36 +66,34 @@ WSGI_APPLICATION = 'database_microservice.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-print("Using Local Postgresql Database")
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'USER': 'postgres',
-        'NAME': 'masters_project_database',  # add your local username here
-        'PASSWORD': 'dummypassword',  # add your local db password here
-        'HOST': 'localhost',
-        'PORT': '5432'
+if DEBUG:
+    print("Using Local Postgresql Database")
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'USER': 'postgres',
+            'NAME': 'masters_project_database',  # add your local username here
+            'PASSWORD': 'dummypassword',  # add your local db password here
+            'HOST': 'localhost',
+            'PORT': '5432'
+        }
     }
-}
+else:
+    print("Using Digital Ocean Postgresql Database")
 
-print("Using Digital Ocean Postgresql Database")
-
-"""
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config_file['postgres_database']['database'],
-        'USER': config_file['postgres_database']['username'],
-        'PASSWORD': config_file['postgres_database']['password'],
-        'HOST': config_file['postgres_database']['host'],
-        'PORT': config_file['postgres_database']['port']
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config_file['postgres_database']['database'],
+            'USER': config_file['postgres_database']['username'],
+            'PASSWORD': config_file['postgres_database']['password'],
+            'HOST': config_file['postgres_database']['host'],
+            'PORT': config_file['postgres_database']['port']
+        }
     }
-}
-# database connection check in seconds
-db_from_env = dj_database_url.config(conn_max_age=1000)
-DATABASES['default'].update(db_from_env)
-"""
+    # database connection check in seconds
+    db_from_env = dj_database_url.config(conn_max_age=1000)
+    DATABASES['default'].update(db_from_env)
 
 
 # Password validation
