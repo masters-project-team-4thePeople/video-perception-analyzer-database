@@ -1,0 +1,9 @@
+SECRET_KEY : 'django-insecure-5+ae5xau(6qz7f9hp1kqy*=)s%cif*ropsbwl!^0d%sh1k^a66'
+DEBUG : False
+ALLOWED_HOSTS : '*'
+postgres_database:
+  database: "defaultdb"
+  username: "doadmin"
+  password: "AVNS_Fc4KeKnAFL9EMGEr_6V"
+  host: "db-postgresql-nyc1-67457-do-user-13984349-0.b.db.ondigitalocean.com"
+  port: "25060"

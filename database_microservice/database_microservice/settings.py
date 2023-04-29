@@ -17,11 +17,9 @@ with open("config.yaml", "r") as stream:
 print(config_file)
 
 # extract keys using decouple module
-SECRET_KEY = config_file['SECRET_KEY']
-DEBUG = config_file['DEBUG']
-ALLOWED_HOSTS = [config_file['ALLOWED_HOSTS']]
-
-# SECURITY WARNING: don't run with debug turned on in production!
+SECRET_KEY = "SECRET_KEY"
+DEBUG = True
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
@@ -32,6 +30,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',  # django rest framework app
+    'users_api',  # users app
+    'videos_api',  # videos app
 ]
 
 MIDDLEWARE = [
@@ -63,7 +63,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'database_microservice.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 if DEBUG:
@@ -80,7 +79,6 @@ if DEBUG:
     }
 else:
     print("Using Digital Ocean Postgresql Database")
-
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -94,7 +92,6 @@ else:
     # database connection check in seconds
     db_from_env = dj_database_url.config(conn_max_age=1000)
     DATABASES['default'].update(db_from_env)
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -114,7 +111,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -123,7 +119,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
@@ -139,3 +134,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AUTH_USER_MODEL = 'users_api.UserProfile'
