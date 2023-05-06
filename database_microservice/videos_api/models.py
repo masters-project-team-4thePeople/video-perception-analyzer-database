@@ -6,7 +6,7 @@ from users_api.models import UserProfile
 class VideoMetaData(models.Model):
     video_id = models.BigAutoField(primary_key=True)
     video_url = models.CharField(max_length=512, default='', blank=True, null=True)
-    video_title = models.CharField(max_length=256, default='', blank=True, null=True)
+    video_title = models.CharField(max_length=256, unique=True)
     video_duration = models.FloatField(default=0.0, blank=True, null=True)
     video_likes = models.IntegerField(default=0, blank=True, null=True)
     video_dislikes = models.IntegerField(default=0, blank=True, null=True)
