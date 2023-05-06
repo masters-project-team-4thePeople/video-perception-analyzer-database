@@ -17,9 +17,9 @@ with open("config.yaml", "r") as stream:
 print(config_file)
 
 # extract keys using decouple module
-SECRET_KEY = "SECRET_KEY"
-DEBUG = True
-ALLOWED_HOSTS = ['*']
+SECRET_KEY = config_file["SECRET_KEY"]
+DEBUG = config_file["DEBUG"]
+ALLOWED_HOSTS = config_file["ALLOWED_HOSTS"]
 
 # Application definition
 INSTALLED_APPS = [
@@ -123,15 +123,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 # Static and media files settings
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# static and media files root settings in production
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'mediafiles'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users_api.UserProfile'
