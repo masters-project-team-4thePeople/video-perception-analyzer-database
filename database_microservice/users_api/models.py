@@ -11,3 +11,6 @@ class UserPreference(models.Model):
     user_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE, blank=True, null=True)
     user_categories = models.JSONField(blank=True, null=True)
     user_video_history = models.JSONField(blank=True, null=True)
+
+    def __str__(self):
+        return str(self.user_id)
