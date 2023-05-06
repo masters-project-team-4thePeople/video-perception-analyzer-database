@@ -14,7 +14,13 @@ class VideoMetaData(models.Model):
     video_category = models.JSONField(blank=True, null=True)
     video_information = models.JSONField(blank=True, null=True)
 
+    def __str__(self):
+        return str(self.video_id)
+
 
 class VideoDetails(models.Model):
     user_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE, blank=True, null=True)
     video_id = models.ForeignKey(VideoMetaData, on_delete=models.CASCADE, blank=True, null=True)
+
+    def __str__(self):
+        return str(self.video_id)
