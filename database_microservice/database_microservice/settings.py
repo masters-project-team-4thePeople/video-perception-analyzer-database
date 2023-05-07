@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',  # django rest framework app
+    'drf_yasg',  # documentation app
     'users_api',  # users app
     'videos_api',  # videos app
 ]
