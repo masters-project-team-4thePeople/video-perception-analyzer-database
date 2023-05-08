@@ -1,9 +1,16 @@
-SECRET_KEY : 'django-insecure-5+ae5xau(6qz7f9hp1kqy*=)s%cif*ropsbwl!^0d%sh1k^a66'
+SECRET_KEY : "django-insecure-5+ae5xau(6qz7f9hp1kqy*=)s%cif*ropsbwl!^0d%sh1k^a66"
 DEBUG : False
-ALLOWED_HOSTS : '*'
+ALLOWED_HOSTS : "*"
 postgres_database:
   database: "defaultdb"
   username: "doadmin"
   password: "AVNS_Fc4KeKnAFL9EMGEr_6V"
   host: "db-postgresql-nyc1-67457-do-user-13984349-0.b.db.ondigitalocean.com"
   port: "25060"
+digital_ocean:
+  USE_SPACES : True
+  access_key : "DO00U2UJAF7L3BWN8MA3"
+  secret_key : "pEf85fTYkfGkcnxDp1BU+5Rbhpq+NFcQ9E8+Ku9k4ss"
+  region_name : "nyc3"
+  endpoint_url : "https://4-the-people-masters-project-vpa-videos-space.nyc3.digitaloceanspaces.com"
+  bucket_name : "4-the-people-masters-project-vpa-videos"
