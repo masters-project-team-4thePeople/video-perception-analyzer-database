@@ -1,26 +1,26 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from .serializers import VideoMetaDataSerializer
-from .models import VideoMetaData
+from .serializers import VideoMetaDataSerializer, VideoDetailsSerializer
+from .models import VideoMetaData, VideoDetails
 
 
 # Create your views here.
 class VideoMetaDataView(APIView):
-    def get_video_object(self, video_title):
+    def get_video_object(self, video_url):
         try:
-            return VideoMetaData.objects.get(username=video_title)
+            return VideoMetaData.objects.get(video_url=video_url)
         except Exception as e:
             return None
 
     def get(self, request):
-        video_title = request.data.get('video_title')
-        video_instance = self.get_video_object(video_title)
+        video_url = request.data.get('video_url')
+        video_instance = self.get_video_object(video_url)
 
         if not video_instance:
             return Response(
                 {
-                    "message": "Video with Title Doesn't Exist"
+                    "message": "Video URL Doesn't Exist"
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
@@ -36,13 +36,13 @@ class VideoMetaDataView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request):
-        video_title = request.data.get('video_title')
-        video_instance = self.get_video_object(video_title)
+        video_url = request.data.get('video_url')
+        video_instance = self.get_video_object(video_url)
 
         if not video_instance:
             return Response(
                 {
-                    "message": "Video with Title Doesn't Exist"
+                    "message": "Video URL Doesn't Exist"
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
@@ -77,6 +77,91 @@ class VideoMetaDataView(APIView):
         video_serializer = VideoMetaDataSerializer(instance=video_instance,
                                                    data=video_data,
                                                    partial=True)
+
+        if video_serializer.is_valid():
+            video_serializer.save()
+            return Response(video_serializer.data, status=status.HTTP_200_OK)
+
+        return Response(video_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class VideoDetailsView(APIView):
+    def get_user_objects(self, user_id):
+        try:
+            return VideoDetails.objects.filter(user_id=user_id)
+        except Exception as e:
+            return None
+
+    def get_video_objects(self, video_id):
+        try:
+            return VideoDetails.objects.get(video_id=video_id)
+        except Exception as e:
+            return None
+
+    def get_video_details_instance(self, video_id):
+        try:
+            return VideoMetaData.objects.get(video_id=video_id)
+        except Exception as e:
+            return None
+
+    def get_video_details(self, video_id):
+        video_instance = self.get_video_details_instance(video_id)
+        video_serializer = VideoMetaDataSerializer(video_instance)
+        return video_serializer.data
+
+    def get(self, request):
+        user_id = request.data.get('user_id')
+        user_instance = self.get_user_objects(user_id)
+
+        if not user_instance:
+            return Response(
+                {
+                    "message": "videos for this user doesn't exist"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        videos_details = {}
+        for videos in user_instance:
+            videos_details[str(videos.video_id)] = self.get_video_details(videos.video_id)
+            videos_details[str(videos.video_id)].update({"vpa_pipeline_status": videos.vpa_pipeline_status})
+            videos_details[str(videos.video_id)].update({"vpa_video_status": videos.vpa_video_status})
+
+        return Response(videos_details, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = VideoDetailsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request):
+        video_id = request.data.get('video_id')
+        video_instance = self.get_video_objects(video_id)
+
+        if not video_instance:
+            return Response(
+                {
+                    "message": "Video Doesn't Exist"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        video_data = {}
+        if request.data.get('vpa_pipeline_status'):
+            video_data.update(
+                {'vpa_pipeline_status': request.data.get('vpa_pipeline_status')}
+            )
+
+        if request.data.get('vpa_video_status'):
+            video_data.update(
+                {'vpa_video_status': request.data.get('vpa_video_status')}
+            )
+
+        video_serializer = VideoDetailsSerializer(instance=video_instance,
+                                                  data=video_data,
+                                                  partial=True)
 
         if video_serializer.is_valid():
             video_serializer.save()
