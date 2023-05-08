@@ -16,7 +16,7 @@ class UserView(APIView):
 
     def get(self, request):
         # get username
-        username_id = request.data.get('username')
+        username_id = request.GET.get('username')
         username_instance = self.get_user_object(username_id)
 
         if not username_instance:
@@ -101,7 +101,7 @@ class UserPreferenceView(APIView):
 
     def get(self, request):
         # get username
-        username_id = request.data.get('user_id')
+        username_id = request.GET.get('user_id')
         username_instance = self.get_user_preference_object(username_id)
 
         if not username_instance:
