@@ -43,3 +43,10 @@ class VideoDetails(models.Model):
 
     def __str__(self):
         return str(self.video_id)
+
+
+class UploadedVideos(models.Model):
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    video_file = models.FileField()
+    username = models.CharField(max_length=64, default="", blank=True, null=True)
+    video_file_url = models.CharField(max_length=2048, default="", blank=True, null=True)

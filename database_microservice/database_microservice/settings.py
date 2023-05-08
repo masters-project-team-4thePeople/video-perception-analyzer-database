@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',  # django rest framework app
     'drf_yasg',  # documentation app
+    'storages',  # storages app
     'users_api',  # users app
     'videos_api',  # videos app
 ]
@@ -124,11 +125,36 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 # Static and media files settings
-STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
+USE_SPACES = config_file["digital_ocean"]['USE_SPACES']
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'mediafiles'
+print(USE_SPACES)
+
+if USE_SPACES:
+    AWS_ACCESS_KEY_ID = config_file["digital_ocean"]["access_key"]
+    AWS_SECRET_ACCESS_KEY = config_file["digital_ocean"]["secret_key"]
+    AWS_STORAGE_BUCKET_NAME = config_file["digital_ocean"]["bucket_name"]
+
+    AWS_DEFAULT_ACL = 'public-read'
+    AWS_S3_ENDPOINT_URL = config_file["digital_ocean"]["endpoint_url"]
+    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+
+    # static settings
+    AWS_LOCATION = 'static'
+    STATIC_URL = f'https://{AWS_S3_ENDPOINT_URL}/{AWS_LOCATION}/'
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+    # public media settings
+    PUBLIC_MEDIA_LOCATION = 'media/users/'
+    MEDIA_URL = f'https://{AWS_S3_ENDPOINT_URL}/{PUBLIC_MEDIA_LOCATION}/'
+    DEFAULT_FILE_STORAGE = 'database_microservice.storage_backends.PublicMediaStorage'
+else:
+    STATIC_URL = '/static/'
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'mediafiles'
+
+
+STATICFILES_DIRS = (BASE_DIR / 'static',)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

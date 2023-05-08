@@ -1,8 +1,13 @@
+import logging
+from django.conf import settings
+from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from .serializers import VideoMetaDataSerializer, VideoDetailsSerializer
-from .models import VideoMetaData, VideoDetails
+from .models import VideoMetaData, VideoDetails, UploadedVideos
+import yaml
+from django.core.files.storage import FileSystemStorage
 
 
 # Create your views here.
@@ -14,7 +19,7 @@ class VideoMetaDataView(APIView):
             return None
 
     def get(self, request):
-        video_url = request.data.get('video_url')
+        video_url = request.GET.get('video_url')
         video_instance = self.get_video_object(video_url)
 
         if not video_instance:
@@ -110,7 +115,7 @@ class VideoDetailsView(APIView):
         return video_serializer.data
 
     def get(self, request):
-        user_id = request.data.get('user_id')
+        user_id = request.GET.get('user_id')
         user_instance = self.get_user_objects(user_id)
 
         if not user_instance:
@@ -168,3 +173,45 @@ class VideoDetailsView(APIView):
             return Response(video_serializer.data, status=status.HTTP_200_OK)
 
         return Response(video_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class VideoSpaceView(APIView):
+    def get(self, request):
+        all_video_details = {}
+        return Response(all_video_details, status=status.HTTP_200_OK)
+
+    def post(self, request):
+
+        if request.method == 'POST' and request.FILES.get('video'):
+            # read config file
+            with open("config.yaml", "r") as stream:
+                try:
+                    config_file = yaml.safe_load(stream)
+                except yaml.YAMLError as exc:
+                    logging.error(exc)
+
+            video_file = request.FILES['video']
+            user_name = request.data.get('user_name')
+
+            try:
+                if settings.USE_SPACES:
+
+                    upload = UploadedVideos(username=user_name,
+                                            video_file=video_file)
+                    upload.video_file_url = upload.video_file.url
+                    upload.save()
+
+                    video_url = upload.video_file.url
+                    return JsonResponse({'message': 'Video uploaded successfully on Digital Ocean Space',
+                                         'video_url': video_url},
+                                        status=200)
+                else:
+                    fs = FileSystemStorage()
+                    filename = fs.save(video_file.name, video_file)
+                    video_url = fs.url(filename)
+
+                    return JsonResponse({'message': 'Video uploaded successfully on Django Server',
+                                         'video_url': video_url},
+                                        status=200)
+            except Exception as e:
+                return JsonResponse({'message': 'Invalid request {error}'.format(error=e)}, status=400)
