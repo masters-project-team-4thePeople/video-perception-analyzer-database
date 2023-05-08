@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   web:
-    container_name: masters_project_django_server
+    container_name: masters_project_django_database_server
     build:
       context: ./database_microservice
       dockerfile: Dockerfile.prod
@@ -15,7 +15,7 @@ services:
     depends_on:
       - postgres_database
   postgres_database:
-    container_name: masters_project_database
+    container_name: masters_project_database_server
     image: postgres:13.0-alpine
     volumes:
       - postgres_data_volume:/var/lib/postgresql/data/
@@ -26,6 +26,7 @@ services:
     ports:
       - "5432:5432"
   nginx:
+    container_name: masters_project_database_nginx_server
     build: ./nginx
     volumes:
       - static_volume:/home/app/web/staticfiles
