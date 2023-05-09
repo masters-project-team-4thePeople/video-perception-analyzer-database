@@ -6,6 +6,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from .serializers import VideoMetaDataSerializer, VideoDetailsSerializer
 from .models import VideoMetaData, VideoDetails, UploadedVideos
+from users_api.models import UserProfile, UserPreference
 import yaml
 from django.core.files.storage import FileSystemStorage
 
@@ -215,3 +216,78 @@ class VideoSpaceView(APIView):
                                         status=200)
             except Exception as e:
                 return JsonResponse({'message': 'Invalid request {error}'.format(error=e)}, status=400)
+
+
+class DashboardUsersView(APIView):
+    def get(self, request):
+        try:
+            all_user_details = {}
+            all_users = UserProfile.objects.all()
+            for user in all_users:
+                user_preference = UserPreference.objects.filter(user_id=user.id)
+
+                if user_preference:
+                    print(user_preference)
+                    all_user_details.update({str(user.id): {
+                        "username": user.username,
+                        "first_name": user.first_name,
+                        "last_name": user.last_name,
+                        "email": user.email,
+                        "birth_date": user.birth_date,
+                        "categories": user_preference[0].user_categories,
+                        "video_history": user_preference[0].user_video_history
+                    }})
+                else:
+                    all_user_details.update({str(user.id): {
+                        "username": user.username,
+                        "first_name": user.first_name,
+                        "last_name": user.last_name,
+                        "email": user.email,
+                        "birth_date": user.birth_date,
+                        "categories": {},
+                        "video_history": {}
+                    }})
+
+            return Response(all_user_details,
+                            status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"message": "Error Fetching API Details"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+
+class DashboardVideosView(APIView):
+    def get(self, request):
+        all_video_details = {}
+        all_videos = VideoMetaData.objects.all()
+
+        for videos in all_videos:
+            video_details = VideoDetails.objects.filter(video_id=videos.video_id)
+
+            if video_details:
+                all_video_details.update({str(videos.video_id): {
+                    "video_url": videos.video_url,
+                    "video_title": videos.video_title,
+                    "video_duration": videos.video_duration,
+                    "likes": videos.video_likes,
+                    "dislikes": videos.video_dislikes,
+                    "video_transcription": videos.video_transcription,
+                    "video_category": videos.video_category,
+                    "video_information": videos.video_information,
+                    "vpa_pipeline_status": video_details[0].vpa_pipeline_status,
+                    "vpa_video_status": video_details[0].vpa_video_status
+                }})
+            else:
+                all_video_details.update({str(videos.video_id): {
+                    "video_url": videos.video_url,
+                    "video_title": videos.video_title,
+                    "video_duration": videos.video_duration,
+                    "likes": videos.video_likes,
+                    "dislikes": videos.video_dislikes,
+                    "video_transcription": videos.video_transcription,
+                    "video_category": videos.video_category,
+                    "video_information": videos.video_information,
+                    "vpa_pipeline_status": {},
+                    "vpa_video_status": {}
+                }})
+
+        return Response(all_video_details, status=status.HTTP_200_OK)
