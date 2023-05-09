@@ -198,12 +198,12 @@ class VideoSpaceView(APIView):
 
                     upload = UploadedVideos(username=user_name,
                                             video_file=video_file)
-                    upload.video_file_url = upload.video_file.url
+                    uploaded_video_url = upload.video_file.url
+                    uploaded_video_url = uploaded_video_url.split("?")[0]
+                    upload.video_file_url = uploaded_video_url
                     upload.save()
-
-                    video_url = upload.video_file.url
                     return JsonResponse({'message': 'Video uploaded successfully on Digital Ocean Space',
-                                         'video_url': video_url},
+                                         'video_url': uploaded_video_url},
                                         status=200)
                 else:
                     fs = FileSystemStorage()

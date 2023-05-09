@@ -50,3 +50,6 @@ class UploadedVideos(models.Model):
     video_file = models.FileField()
     username = models.CharField(max_length=64, default="", blank=True, null=True)
     video_file_url = models.CharField(max_length=2048, default="", blank=True, null=True)
+
+    def __str__(self):
+        return str(self.video_file)

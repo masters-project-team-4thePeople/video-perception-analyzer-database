@@ -128,8 +128,6 @@ USE_TZ = True
 # Static and media files settings
 USE_SPACES = config_file["digital_ocean"]['USE_SPACES']
 
-print(USE_SPACES)
-
 if USE_SPACES:
     AWS_ACCESS_KEY_ID = config_file["digital_ocean"]["access_key"]
     AWS_SECRET_ACCESS_KEY = config_file["digital_ocean"]["secret_key"]
