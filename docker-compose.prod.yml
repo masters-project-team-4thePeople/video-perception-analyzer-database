@@ -9,7 +9,6 @@ services:
     command: gunicorn database_microservice.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - static_volume:/home/app/web/staticfiles
-      - media_volume:/home/app/web/mediafiles
     expose:
       - 8000
     depends_on:
@@ -30,7 +29,6 @@ services:
     build: ./nginx
     volumes:
       - static_volume:/home/app/web/staticfiles
-      - media_volume:/home/app/web/mediafiles
     ports:
       - "80:80"
     depends_on:
@@ -38,4 +36,3 @@ services:
 volumes:
   postgres_data_volume:
   static_volume:
-  media_volume:
