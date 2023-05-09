@@ -157,3 +157,5 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users_api.UserProfile'
+
+FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800
