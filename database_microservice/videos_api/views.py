@@ -106,7 +106,7 @@ class VideoDetailsView(APIView):
 
     def get_video_details_instance(self, video_id):
         try:
-            return VideoMetaData.objects.get(video_id=video_id)
+            return VideoMetaData.objects.filter(video_id=video_id)
         except Exception as e:
             return None
 
@@ -129,7 +129,41 @@ class VideoDetailsView(APIView):
 
         videos_details = {}
         for videos in user_instance:
-            videos_details[str(videos.video_id)] = self.get_video_details(videos.video_id)
+            current_video = VideoMetaData.objects.filter(video_id=str(videos.video_id))
+            videos_details[str(videos.video_id)] = {}
+            if current_video:
+                videos_details[str(videos.video_id)].update({
+                    'video_url': current_video[0].video_url,
+                })
+
+                videos_details[str(videos.video_id)].update({
+                    'video_title': current_video[0].video_title,
+                })
+
+                videos_details[str(videos.video_id)].update({
+                    'video_duration': current_video[0].video_duration,
+                })
+
+                videos_details[str(videos.video_id)].update({
+                    'video_likes': current_video[0].video_likes,
+                })
+
+                videos_details[str(videos.video_id)].update({
+                    'video_dislikes': current_video[0].video_dislikes,
+                })
+
+                videos_details[str(videos.video_id)].update({
+                    'video_transcription': current_video[0].video_transcription,
+                })
+
+                videos_details[str(videos.video_id)].update({
+                    'video_category': current_video[0].video_category,
+                })
+
+                videos_details[str(videos.video_id)].update({
+                    'video_information': current_video[0].video_information,
+                })
+
             videos_details[str(videos.video_id)].update({"vpa_pipeline_status": videos.vpa_pipeline_status})
             videos_details[str(videos.video_id)].update({"vpa_video_status": videos.vpa_video_status})
 
@@ -227,7 +261,6 @@ class DashboardUsersView(APIView):
                 user_preference = UserPreference.objects.filter(user_id=user.id)
 
                 if user_preference:
-                    print(user_preference)
                     all_user_details.update({str(user.id): {
                         "username": user.username,
                         "first_name": user.first_name,
