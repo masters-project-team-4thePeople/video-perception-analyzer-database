@@ -1,6 +1,7 @@
+import glob
 import logging
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -212,7 +213,33 @@ class VideoDetailsView(APIView):
 
 class VideoSpaceView(APIView):
     def get(self, request):
+        all_video_categories = [
+            "film_and_animation",
+            "autos_and_vehicles",
+            "music",
+            "pets_and_animals",
+            "sports",
+            "travel_and_events",
+            "gaming",
+            "people_and_blogs",
+            "comedy",
+            "entertainment",
+            "news_and_politics",
+            "how_to_and_style",
+            "education",
+            "science_and_technology",
+            "nonprofits_and_activism"
+        ]
+
+        all_video_objects = UploadedVideos.objects.filter(username__in=all_video_categories)
         all_video_details = {}
+
+        for category in all_video_categories:
+            all_video_details[category] = []
+
+        for videos in all_video_objects:
+            all_video_details[videos.username].append(videos.video_file_url)
+
         return Response(all_video_details, status=status.HTTP_200_OK)
 
     def post(self, request):
