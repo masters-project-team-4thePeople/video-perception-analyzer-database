@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   web:
-    container_name: masters_project_django_database_server
+    container_name: masters_project_django_server
     build:
       context: ./database_microservice
       dockerfile: Dockerfile.prod
@@ -25,7 +25,7 @@ services:
     ports:
       - "5432:5432"
   nginx:
-    container_name: masters_project_database_nginx_server
+    container_name: masters_project_nginx_server
     build: ./nginx
     volumes:
       - static_volume:/home/app/web/staticfiles
